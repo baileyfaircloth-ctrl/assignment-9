@@ -385,3 +385,46 @@ app.listen(PORT, () => {
     console.log(`Server running on port http://localhost:${PORT}`);
 });
 const jwt = require('jsonwebtoken');
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Find user (example logic)
+  const user = await User.findOne({ where: { email } });
+
+  if (!user || password !== 'password123') {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+
+  res.json({ token, user });
+});
+function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Missing token' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+}
+app.post('/api/logout', (req, res) => {
+  res.json({ message: 'Logged out successfully' });
+});
