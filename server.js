@@ -370,3 +370,4 @@ app.delete('/api/tasks/:id', requireAuth, async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port http://localhost:${PORT}`);
 });
+const jwt = require('jsonwebtoken');
