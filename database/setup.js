@@ -108,3 +108,11 @@ module.exports = {
     Project,
     Task
 };
+role: {
+  type: Sequelize.STRING,
+  allowNull: false,
+  defaultValue: 'employee',
+  validate: {
+    isIn: [['employee', 'manager', 'admin']]
+  }
+}
