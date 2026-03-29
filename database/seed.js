@@ -102,3 +102,15 @@ async function seedDatabase() {
 }
 
 seedDatabase();
+{
+  email: 'john@company.com',
+  role: 'employee'
+},
+{
+  email: 'sarah@company.com',
+  role: 'manager'
+},
+{
+  email: 'mike@company.com',
+  role: 'admin'
+}
