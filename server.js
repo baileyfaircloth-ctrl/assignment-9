@@ -52,15 +52,29 @@ testConnection();
 // AUTHENTICATION ROUTES
 
 // POST /api/register - Register new user
-app.post('/api/register', async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-        
-        // Check if user exists
-        const existingUser = await User.findOne({ where: { email } });
-        if (existingUser) {
-            return res.status(400).json({ error: 'User with this email already exists' });
-        }
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Find user (example logic)
+  const user = await User.findOne({ where: { email } });
+
+  if (!user || password !== 'password123') {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+
+  res.json({ token, user });
+});
         
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
